@@ -60,7 +60,6 @@ CREATE USER webserver WITH password 'test';
 GRANT ALL privileges ON DATABASE simple_gis TO webserver;
 
 \connect simple_gis;
-CREATE SCHEMA gis_catalog AUTHORIZATION webserver;
 CREATE EXTENSION postgis;
 \q
 ```

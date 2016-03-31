@@ -1,5 +1,5 @@
 AppBundle\Entity\Building:
-    building_{1..10000}:
+    building_rnd_{1..10000}:
         address (unique): <address()>
         latitude: <randomFloat(8, 45, 60)>
         longitude: <randomFloat(8, 70, 95)>

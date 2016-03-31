@@ -1,54 +1,54 @@
 AppBundle\Entity\Organization:
     organization_1_{1..10000}:
-        building: "@building*"
+        building: "@building_rnd*"
         phones: [<phoneNumber()>]
-        name (unique): <company()> <numerify('1######')>
+        name: <company()> <current()> <numerify('1######')>
         rubrics: ["@rubric_first_1*", "@rubric_second_1*"]
 
     organization_2_{1..10000}:
-        building: "@building*"
+        building: "@building_rnd*"
         phones: [<phoneNumber()>, <phoneNumber()>]
-        name (unique): <company()> <numerify('2######')>
+        name: <company()> <current()> <numerify('2######')>
         rubrics: ["@rubric_first_2*", "@rubric_second_2*"]
 
     organization_3_{1..10000}:
-        building: "@building*"
+        building: "@building_rnd*"
         phones: [<phoneNumber()>]
-        name (unique): <company()> <numerify('3######')>
+        name: <company()> <current()> <numerify('3######')>
         rubrics: ["@rubric_first_3*", "@rubric_second_3*"]
 
     organization_test_1:
         building: "@building_test_1"
         phones: [<phoneNumber()>, <phoneNumber()>]
-        name (unique): 'ООО "Рога и Копыта"'
+        name: 'ООО "Рога и Копыта"'
         rubrics: ["@rubric_2_2_1", "@rubric_2_2_2"]
 
     organization_test_2:
         building: "@building_test_1"
         phones: [<phoneNumber()>, <phoneNumber()>]
-        name (unique): 'ООО "Газмяс"'
+        name: 'ООО "Газмяс"'
         rubrics: ["@rubric_1_1", "@rubric_1_2"]
 
     organization_test_3:
         building: "@building_test_1"
         phones: [<phoneNumber()>]
-        name (unique): 'ПАО "ТренаЖорка"'
+        name: 'ПАО "ТренаЖорка"'
         rubrics: ["@rubric_3"]
 
     organization_test_4:
         building: "@building_test_2"
         phones: [<phoneNumber()>]
-        name (unique): 'ПАО "Тяжеловозы"'
+        name: 'ПАО "Тяжеловозы"'
         rubrics: ["@rubric_2_1"]
 
     organization_test_5:
         building: "@building_test_2"
         phones: [<phoneNumber()>, <phoneNumber()>]
-        name (unique): 'Магазин "Все для дома"'
+        name: 'Магазин "Все для дома"'
         rubrics: ["@rubric_1_1","@rubric_2_1"]
 
     organization_test_6:
         building: "@building_test_2"
         phones: [<phoneNumber()>, <phoneNumber()>]
-        name (unique): 'АО "Вот это поворот"'
+        name: 'АО "Вот это поворот"'
         rubrics: ["@rubric_2_2_1","@rubric_2_2_2"]

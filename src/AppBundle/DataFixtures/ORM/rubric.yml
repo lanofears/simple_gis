@@ -55,6 +55,6 @@ AppBundle\Entity\Rubric:
         parent: "@rubric_2_2"
         name: 'Запчасти для подвески'
 
-    rubric_2_2_1:
+    rubric_2_2_2:
         parent: "@rubric_2_2"
         name: 'Шины/Диски'
