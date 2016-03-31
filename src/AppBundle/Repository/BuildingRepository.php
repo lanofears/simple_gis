@@ -34,7 +34,7 @@ class BuildingRepository extends AbstractRepository
         if (array_key_exists(SearchFilters::Q_ADDRESS, $params)) {
             $address = FilterTransformer::createFreeFilter($params[SearchFilters::Q_ADDRESS]);
             $query_builder
-                ->andWhere('b.address LIKE :address')
+                ->andWhere('LOWER(b.address) LIKE LOWER(:address)')
                 ->setParameter('address', $address);
         }
 

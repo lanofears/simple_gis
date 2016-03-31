@@ -47,8 +47,8 @@ class OrganizationRepository extends AbstractRepository
         }
 
         if (array_key_exists(SearchFilters::Q_LOCATION, $params)) {
-            if (preg_match('/(?<latitude>[\d|\.]+),(?<longitude>[\d|\.]+)(,(?<radius>[\d|\.]+))?/ui',
-                    $params[SearchFilters::Q_LOCATION], $match) === false) {
+            if (!preg_match('/(?<latitude>[\d|\.]+),(?<longitude>[\d|\.]+)(,(?<radius>[\d|\.]+))?/ui',
+                    $params[SearchFilters::Q_LOCATION], $match)) {
                 throw new WrongParametersException(
                     'Неверное значение области поиска, доллжно быть "latitude,longitude,radius" получено "'.
                     $params[SearchFilters::Q_LOCATION].'"');
@@ -61,16 +61,29 @@ class OrganizationRepository extends AbstractRepository
         }
 
         if (array_key_exists(SearchFilters::Q_RUBRIC, $params)) {
-            $rubric_ids = array_keys($this->getEntityManager()
-                ->getRepository('AppBundle:Rubric')
-                ->findByIdRecursive((int)$params[SearchFilters::Q_RUBRIC]));
-            if (!$rubric_ids) {
-                return [];
+            if (!preg_match('/\(?<rubric>d+)(?<recursive>,recursive)?/ui', $params[SearchFilters::Q_RUBRIC], $match)) {
+                throw new WrongParametersException('Нверное значения фильтра по раубрике, должно быть '.
+                    '"rubric_id[,recursive]", получено "'.$params[SearchFilters::Q_RUBRIC].'"');
             }
+            $rubric = $match['rubric'];
 
-            $query_builder
-                ->andWhere('r.id IN (:rubric)')
-                ->setParameter('rubric', $rubric_ids);
+            if (isset($match['recursive'])) {
+                $rubric_ids = array_keys($this->getEntityManager()
+                    ->getRepository('AppBundle:Rubric')
+                    ->findByIdRecursive($rubric));
+                if (!$rubric_ids) {
+                    return [ ];
+                }
+
+                $query_builder
+                    ->andWhere('r.id IN (:rubric)')
+                    ->setParameter('rubric', $rubric_ids);
+            }
+            else {
+                $query_builder
+                    ->andWhere('r.id = :rubric')
+                    ->setParameter('rubric', $rubric);
+            }
         }
 
         if (array_key_exists(SearchFilters::Q_ORDER, $params)) {
@@ -133,7 +146,7 @@ class OrganizationRepository extends AbstractRepository
     {
         $name = FilterTransformer::createSubStringFilter($name);
         return $this->getResult($this->getQueryBuilder()
-            ->where('r.name LIKE :name')
+            ->where('LOWER(r.name) LIKE LOWER(:name)')
             ->setParameter('name', $name)
         );
     }
@@ -166,7 +179,7 @@ class OrganizationRepository extends AbstractRepository
     {
         $address = FilterTransformer::createFreeFilter($address);
         return $this->getResult($this->getQueryBuilder()
-            ->where('b.address LIKE :address')
+            ->where('LOWER(b.address) LIKE LOWER(:address)')
             ->setParameter('address', $address)
         );
     }
