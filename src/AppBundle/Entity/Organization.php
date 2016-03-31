@@ -55,7 +55,7 @@ class Organization
      *
      * @ORM\ManyToOne(targetEntity="Building", inversedBy="organizations")
      * @ORM\JoinColumn(name="building_id", referencedColumnName="id")
-     * @Groups({"list","details"})
+     * @Groups({"list","organization_details"})
      * @MaxDepth(1)
      * @Expose
      */

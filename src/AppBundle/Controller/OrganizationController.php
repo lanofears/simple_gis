@@ -85,7 +85,7 @@ class OrganizationController extends ApiController
      * @param int $id
      * @return array
      *
-     * @View(serializerGroups={"details"}, serializerEnableMaxDepthChecks="true")
+     * @View(serializerGroups={"details", "organization_details"}, serializerEnableMaxDepthChecks="true")
      * @Route("/{id}", requirements={"id": "\d+"}, name="api_organization_item")
      * @Method({"GET"})
      */

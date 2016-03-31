@@ -16,3 +16,39 @@ AppBundle\Entity\Organization:
         phones: [<phoneNumber()>]
         name (unique): <company()> <numerify('3######')>
         rubrics: ["@rubric_first_3*", "@rubric_second_3*"]
+
+    organization_test_1:
+        building: "@building_test_1"
+        phones: [<phoneNumber()>, <phoneNumber()>]
+        name (unique): 'ООО "Рога и Копыта"'
+        rubrics: ["@rubric_2_2_1", "@rubric_2_2_2"]
+
+    organization_test_2:
+        building: "@building_test_1"
+        phones: [<phoneNumber()>, <phoneNumber()>]
+        name (unique): 'ООО "Газмяс"'
+        rubrics: ["@rubric_1_1", "@rubric_1_2"]
+
+    organization_test_3:
+        building: "@building_test_1"
+        phones: [<phoneNumber()>]
+        name (unique): 'ПАО "ТренаЖорка"'
+        rubrics: ["@rubric_3"]
+
+    organization_test_4:
+        building: "@building_test_2"
+        phones: [<phoneNumber()>]
+        name (unique): 'ПАО "Тяжеловозы"'
+        rubrics: ["@rubric_2_1"]
+
+    organization_test_5:
+        building: "@building_test_2"
+        phones: [<phoneNumber()>, <phoneNumber()>]
+        name (unique): 'Магазин "Все для дома"'
+        rubrics: ["@rubric_1_1","@rubric_2_1"]
+
+    organization_test_6:
+        building: "@building_test_2"
+        phones: [<phoneNumber()>, <phoneNumber()>]
+        name (unique): 'АО "Вот это поворот"'
+        rubrics: ["@rubric_2_2_1","@rubric_2_2_2"]

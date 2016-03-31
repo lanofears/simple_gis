@@ -22,3 +22,39 @@ AppBundle\Entity\Rubric:
     rubric_second_3_{1..50}:
         parent: "@rubric_second_2*"
         name: Рубрика <lexify('??????????')> <numerify('L3.###')>
+
+    rubric_1:
+        parent: null
+        name: 'Еда'
+
+    rubric_2:
+        parent: null
+        name: 'Автомобили'
+
+    rubric_3:
+        parent: null
+        name: 'Спорт'
+
+    rubric_1_1:
+        parent: "@rubric_1"
+        name: 'Полуфабрикаты оптом'
+
+    rubric_1_2:
+        parent: "@rubric_1"
+        name: 'Мясная продукция'
+
+    rubric_2_1:
+        parent: "@rubric_2"
+        name: 'Грузовые'
+
+    rubric_2_2:
+        parent: "@rubric_2"
+        name: 'Легковые'
+
+    rubric_2_2_1:
+        parent: "@rubric_2_2"
+        name: 'Запчасти для подвески'
+
+    rubric_2_2_1:
+        parent: "@rubric_2_2"
+        name: 'Шины/Диски'
