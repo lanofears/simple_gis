@@ -1,0 +1,24 @@
+AppBundle\Entity\Rubric:
+    rubric_first_1_{1..50}:
+        parent: null
+        name: Рубрика <lexify('??????????')> <numerify('L1.###')>
+
+    rubric_second_1_{1..50}:
+        parent: null
+        name: Рубрика <lexify('??????????')> <numerify('L1.###')>
+
+    rubric_first_2_{1..100}:
+        parent: "@rubric_first_1*"
+        name: Рубрика <lexify('??????????')> <numerify('L2.###')>
+
+    rubric_second_2_{1..40}:
+        parent: "@rubric_second_1*"
+        name: Рубрика <lexify('??????????')> <numerify('L2.###')>
+
+    rubric_first_3_{1..50}:
+        parent: "@rubric_first_2*"
+        name: Рубрика <lexify('??????????')> <numerify('L3.###')>
+
+    rubric_second_3_{1..50}:
+        parent: "@rubric_second_2*"
+        name: Рубрика <lexify('??????????')> <numerify('L3.###')>

@@ -1,0 +1,12 @@
+# This file is auto-generated during the composer install
+parameters:
+    database_host: localhost
+    database_port: 5432
+    database_name: simple_gis
+    database_user: webserver
+    database_password: test
+    secret: 135fa3668531d06308c0b00a7863751b1e9a4cc2
+    mailer_transport: smtp
+    mailer_host: 127.0.0.1
+    mailer_user: null
+    mailer_password: null

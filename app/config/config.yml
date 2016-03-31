@@ -1,0 +1,79 @@
+imports:
+    - { resource: parameters.yml }
+    - { resource: security.yml }
+    - { resource: services.yml }
+
+parameters:
+    locale: ru
+
+framework:
+    secret:          "%secret%"
+    router:
+        resource: "%kernel.root_dir%/config/routing.yml"
+        strict_requirements: ~
+    form:            ~
+    csrf_protection: ~
+    validation:      { enable_annotations: true }
+    default_locale:  "%locale%"
+    trusted_hosts:   ~
+    trusted_proxies: ~
+    session:
+        handler_id:  session.handler.native_file
+        save_path:   "%kernel.root_dir%/../var/sessions/%kernel.environment%"
+    fragments:       ~
+    http_method_override: true
+    assets: ~
+    templating:
+        engines: ['twig','php']
+fos_rest:
+    routing_loader:
+        default_format: json
+        include_format: true
+    param_fetcher_listener: force
+    body_listener: true
+    allowed_methods_listener: true
+    serializer:
+        serialize_null: true
+    view:
+        mime_types:
+            json: ['application/json; charset=UTF-8', 'application/json']
+        view_response_listener: 'force'
+        formats:
+            json: true
+        templating_formats:
+            html: true
+    exception:
+        enabled: true
+    format_listener:
+        rules:
+            - { path: '^/api', priorities: ['json'], fallback_format: json, prefer_extension: true }
+
+sensio_framework_extra:
+    view:    { annotations: false }
+    router:  { annotations: true }
+
+# Doctrine Configuration
+doctrine:
+    dbal:
+        driver:   pdo_pgsql
+        host:     "%database_host%"
+        port:     "%database_port%"
+        dbname:   "%database_name%"
+        user:     "%database_user%"
+        password: "%database_password%"
+        charset:  UTF8
+
+    orm:
+        auto_generate_proxy_classes: "%kernel.debug%"
+        naming_strategy: doctrine.orm.naming_strategy.underscore
+        auto_mapping: true
+        dql:
+            string_functions:
+                GeoDistance: AppBundle\Extensions\ORM\Functions\GeoDistance
+                GeoPoint: AppBundle\Extensions\ORM\Functions\GeoPoint
+
+doctrine_migrations:
+    dir_name: "%kernel.root_dir%/DoctrineMigrations"
+    namespace: Application\Migrations
+    table_name: migration_versions
+    name: Application Migrations

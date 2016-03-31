@@ -1,0 +1,15 @@
+AppBundle\Entity\Building:
+    building_{1..10000}:
+        address (unique): <address()>
+        latitude: <randomFloat(8, 45, 60)>
+        longitude: <randomFloat(8, 70, 95)>
+
+    building_test_1:
+        address: 'г. Новосибирск, ул. Лесосечная, д. 2'
+        latitude: 54.88991100
+        longitude: 83.07693200
+
+    building_test_2:
+        address: 'г. Новосибирск, ул. Лесосечная, д. 7'
+        latitude: 54.89022600
+        longitude: 83.08888100

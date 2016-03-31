@@ -1,0 +1,18 @@
+AppBundle\Entity\Organization:
+    organization_1_{1..10000}:
+        building: "@building*"
+        phones: [<phoneNumber()>]
+        name (unique): <company()> <numerify('1######')>
+        rubrics: ["@rubric_first_1*", "@rubric_second_1*"]
+
+    organization_2_{1..10000}:
+        building: "@building*"
+        phones: [<phoneNumber()>, <phoneNumber()>]
+        name (unique): <company()> <numerify('2######')>
+        rubrics: ["@rubric_first_2*", "@rubric_second_2*"]
+
+    organization_3_{1..10000}:
+        building: "@building*"
+        phones: [<phoneNumber()>]
+        name (unique): <company()> <numerify('3######')>
+        rubrics: ["@rubric_first_3*", "@rubric_second_3*"]
