@@ -365,9 +365,9 @@ API: РУКОВОДСТВО
 
 Рабочая версия проекта размещена на облачном хостинге Amazon:
 
-Рубрики     - http://ec2-52-37-22-127.us-west-2.compute.amazonaws.com/api/rubric/
-Здания      - http://ec2-52-37-22-127.us-west-2.compute.amazonaws.com/api/building/
-Организации - http://ec2-52-37-22-127.us-west-2.compute.amazonaws.com/api/organization/
+ - Рубрики: http://ec2-52-37-22-127.us-west-2.compute.amazonaws.com/api/rubric/
+ - Здания: http://ec2-52-37-22-127.us-west-2.compute.amazonaws.com/api/building/
+ - Организации: http://ec2-52-37-22-127.us-west-2.compute.amazonaws.com/api/organization/
 
 <div id='online-doc'/>
 ### On-line документация
