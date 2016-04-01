@@ -87,6 +87,6 @@ class RubricController extends ApiController
      */
     public function itemAction($id)
     {
-        return $this->returnResult('rubrics', [ $this->rubric_repository->findById($id) ]);
+        return $this->returnResult('rubrics', $this->rubric_repository->findById($id));
     }
 }

@@ -83,6 +83,6 @@ class BuildingController extends ApiController
      */
     public function itemAction($id)
     {
-        return $this->returnResult('buildings', [ $this->building_repository->find($id) ]);
+        return $this->returnResult('buildings', $this->building_repository->findById($id) );
     }
 }

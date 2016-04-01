@@ -61,7 +61,7 @@ class OrganizationRepository extends AbstractRepository
         }
 
         if (array_key_exists(SearchFilters::Q_RUBRIC, $params)) {
-            if (!preg_match('/\(?<rubric>d+)(?<recursive>,recursive)?/ui', $params[SearchFilters::Q_RUBRIC], $match)) {
+            if (!preg_match('/(?<rubric>\d+)(?<recursive>,recursive)?/ui', $params[SearchFilters::Q_RUBRIC], $match)) {
                 throw new WrongParametersException('Нверное значения фильтра по раубрике, должно быть '.
                     '"rubric_id[,recursive]", получено "'.$params[SearchFilters::Q_RUBRIC].'"');
             }
@@ -108,7 +108,7 @@ class OrganizationRepository extends AbstractRepository
      * Поиск организации по идентификатору
      *
      * @param int $id
-     * @return Organization
+     * @return Organization[]
      */
     public function findById($id)
     {

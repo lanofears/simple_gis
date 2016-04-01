@@ -56,6 +56,20 @@ class BuildingRepository extends AbstractRepository
     }
 
     /**
+     * Поиск здания по идентификатору
+     *
+     * @param int $id
+     * @return Building[]
+     */
+    public function findById($id)
+    {
+        return $this->getResult($this->getQueryBuilder()
+            ->where('b.id = :id')
+            ->setParameter('id', $id)
+        );
+    }
+
+    /**
      * Поиск всех зданий с адресом удовлетворяющим заданному фильтру.
      * Фильтр строится из указанной строки $address удалением всех спецсимволов и заменой пробелов на
      * вхождение либого кол-ва любых символов.

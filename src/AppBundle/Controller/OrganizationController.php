@@ -91,9 +91,6 @@ class OrganizationController extends ApiController
      */
     public function itemAction($id)
     {
-        /** @var Organization $organization */
-        $organization = $this->organization_repository->findById($id);
-
-        return $this->returnResult('organizations', [ $organization ]);
+        return $this->returnResult('organizations', $this->organization_repository->findById($id));
     }
 }
