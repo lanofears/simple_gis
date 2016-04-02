@@ -42,6 +42,8 @@ class OrganizationController extends ApiController
      *          {"name"="location", "dataType"="float,float,int", "pattern"="latitude,longitude,radius"},
      *          {"name"="rubric", "dataType"="int"},
      *          {"name"="order", "dataType"="string", "pattern"="name|address"},
+     *          {"name"="page", "dataType"="int"},
+     *          {"name"="limit", "dataType"="int"},
      *          {"name"="callback", "dataType"="string"},
      *     },
      *     statusCodes={
@@ -62,11 +64,13 @@ class OrganizationController extends ApiController
     public function listAction(Request $request)
     {
         $organizations = $this->organization_repository
-            ->findByParams($this->filterParams($request, [
+            ->findByParamsPaged($this->filterParams($request, [
                 SearchFilters::Q_ADDRESS,
                 SearchFilters::Q_LOCATION,
                 SearchFilters::Q_RUBRIC,
-                SearchFilters::Q_ORDER
+                SearchFilters::Q_ORDER,
+                SearchFilters::Q_LIMIT,
+                SearchFilters::Q_PAGE
             ]));
 
         return $this->returnResult('organizations', $organizations);

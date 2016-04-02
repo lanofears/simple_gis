@@ -5,6 +5,7 @@ namespace AppBundle\Controller;
 use AppBundle\Exception\EmptyResultException;
 use AppBundle\Exception\WrongParametersException;
 use AppBundle\Extensions\References\SearchFilters;
+use AppBundle\Repository\Paginator\Paginator;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -22,7 +23,8 @@ class ApiController
      * @return array
      * @throws WrongParametersException
      */
-    protected function filterParams($request, $param_names) {
+    protected function filterParams($request, $param_names)
+    {
         $params = [];
         $wrong_params = [];
         $param_names[] = SearchFilters::Q_CALLBACK;
@@ -48,15 +50,26 @@ class ApiController
      * Выдача данных пользователю
      *
      * @param string $header
-     * @param array $data
+     * @param Paginator|array $data
      * @return array
      * @throws EmptyResultException
      */
-    protected function returnResult($header, $data) {
-        if (!$data) {
+    protected function returnResult($header, $data)
+    {
+        $result = [ 'success' => true, 'code' => 200];
+
+        if ($data instanceof Paginator) {
+            $result['total'] = $data->count();
+            $result[$header] = $data->getResult();
+        }
+        else {
+            $result[$header] = $data;
+        }
+
+        if (!$result[$header]) {
             throw new EmptyResultException('Не найдено данных удовлетворяющих заданным критериям');
         }
 
-        return [ 'success' => true, 'code' => 200, $header => $data ];
+        return $result;
     }
 }

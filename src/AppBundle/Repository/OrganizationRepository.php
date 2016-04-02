@@ -7,7 +7,9 @@ use AppBundle\Entity\Organization;
 use AppBundle\Entity\Rubric;
 use AppBundle\Exception\WrongParametersException;
 use AppBundle\Extensions\References\SearchFilters;
+use AppBundle\Extensions\Utils\ArrayValidator;
 use AppBundle\Extensions\Utils\FilterTransformer;
+use Doctrine\ORM\QueryBuilder;
 
 /**
  * Репозиторий для работы с организациями
@@ -16,6 +18,14 @@ use AppBundle\Extensions\Utils\FilterTransformer;
  */
 class OrganizationRepository extends AbstractRepository
 {
+    const ORDER_BY_NAME = 'name';
+    const ORDER_BY_ADDRESS = 'address';
+
+    protected static $order_mapping = [
+        self::ORDER_BY_NAME     => 'o.name',
+        self::ORDER_BY_ADDRESS  => 'b.address'
+    ];
+
     /**
      * {@inheritDoc}
      */
@@ -28,15 +38,70 @@ class OrganizationRepository extends AbstractRepository
     }
 
     /**
+     * Добавление в запрос фильтра по адресу
+     *
+     * @param QueryBuilder $query_builder
+     * @param $address
+     * @return mixed
+     */
+    private function applyFilterByAddress($query_builder, $address)
+    {
+        $address = FilterTransformer::createFreeFilter($address);
+
+        return $query_builder
+            ->andWhere('LOWER(b.address) LIKE LOWER(:address)')
+            ->setParameter('address', $address);
+    }
+
+    /**
+     * Добавление в запрос фильтра по местоположению
+     *
+     * @param QueryBuilder $query_builder
+     * @param float $latitude
+     * @param float $longitude
+     * @param int $radius
+     * @return QueryBuilder
+     */
+    private function applyFilterByLocation($query_builder, $latitude, $longitude, $radius)
+    {
+        return $query_builder
+            ->andWhere('GeoDistance(GeoPoint(b.longitude, b.latitude), GeoPoint(:longitude, :latitude)) < :radius')
+            ->setParameter('longitude', $longitude)
+            ->setParameter('latitude', $latitude)
+            ->setParameter('radius', $radius);
+    }
+
+    /**
+     * @param QueryBuilder $query_builder
+     * @param int $rubric
+     * @param bool $recursive
+     * @return QueryBuilder
+     */
+    private function applyFilterByRubric($query_builder, $rubric, $recursive = false)
+    {
+        if ($recursive) {
+            $rubric_ids = array_keys($this->getEntityManager()
+                ->getRepository('AppBundle:Rubric')
+                ->findByIdRecursive($rubric));
+            if ($rubric_ids) {
+                return $query_builder
+                    ->andWhere('r.id IN (:rubric)')
+                    ->setParameter('rubric', $rubric_ids);
+            }
+        }
+
+        return $query_builder
+            ->andWhere('r.id = :rubric')
+            ->setParameter('rubric', $rubric);
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function applyParameters($query_builder, $params)
     {
         if (array_key_exists(SearchFilters::Q_ADDRESS, $params)) {
-            $address = FilterTransformer::createFreeFilter($params[SearchFilters::Q_ADDRESS]);
-            $query_builder
-                ->andWhere('LOWER(b.address) LIKE LOWER(:address)')
-                ->setParameter('address', $address);
+            $query_builder = $this->applyFilterByAddress($query_builder, $params[SearchFilters::Q_ADDRESS]);
         }
 
         if (array_key_exists(SearchFilters::Q_NAME, $params)) {
@@ -53,11 +118,8 @@ class OrganizationRepository extends AbstractRepository
                     'Неверное значение области поиска, доллжно быть "latitude,longitude,radius" получено "'.
                     $params[SearchFilters::Q_LOCATION].'"');
             }
-            $query_builder
-                ->andWhere('GeoDistance(GeoPoint(b.longitude, b.latitude), GeoPoint(:longitude, :latitude)) < :radius')
-                ->setParameter('longitude', $match['longitude'])
-                ->setParameter('latitude', $match['latitude'])
-                ->setParameter('radius', isset($match['radius']) ? $match['radius'] : 50);
+            $query_builder = $this->applyFilterByLocation($query_builder,
+                $match['latitude'], $match['longitude'], isset($match['radius']) ? $match['radius'] : 50);
         }
 
         if (array_key_exists(SearchFilters::Q_RUBRIC, $params)) {
@@ -65,41 +127,19 @@ class OrganizationRepository extends AbstractRepository
                 throw new WrongParametersException('Нверное значения фильтра по раубрике, должно быть '.
                     '"rubric_id[,recursive]", получено "'.$params[SearchFilters::Q_RUBRIC].'"');
             }
-            $rubric = $match['rubric'];
-
-            if (isset($match['recursive'])) {
-                $rubric_ids = array_keys($this->getEntityManager()
-                    ->getRepository('AppBundle:Rubric')
-                    ->findByIdRecursive($rubric));
-                if (!$rubric_ids) {
-                    return [ ];
-                }
-
-                $query_builder
-                    ->andWhere('r.id IN (:rubric)')
-                    ->setParameter('rubric', $rubric_ids);
-            }
-            else {
-                $query_builder
-                    ->andWhere('r.id = :rubric')
-                    ->setParameter('rubric', $rubric);
-            }
+            $query_builder = $this->applyFilterByRubric($query_builder, $match['rubric'],isset($match['recursive']));
         }
 
+        $sort = [ self::ORDER_BY_NAME ];
         if (array_key_exists(SearchFilters::Q_ORDER, $params)) {
-            $order_values = ['name' => 'o.name', 'address' => 'b.address'];
-            foreach (explode(',', $params[SearchFilters::Q_ORDER]) as $order) {
-                if (!array_key_exists($order, $order_values)) {
-                    throw new WrongParametersException(
-                        'Неверное значение поля для портировки, доллжно быть "name", или "address", получено "'.$order.'"');
-                }
-
-                $query_builder->addOrderBy($order_values[$order]);
+            $sort = explode(',', $params[SearchFilters::Q_ORDER]);
+            if (!ArrayValidator::isSubsetOf($sort, self::$order_mapping)) {
+                throw new WrongParametersException(
+                    'Неверное значение поля для портировки, может принимать значения "'.implode(self::$order_mapping).'", '.
+                    'получено "'.$params[SearchFilters::Q_ORDER].'"');
             }
         }
-        else {
-            $query_builder->addOrderBy('o.name');
-        }
+        $query_builder = $this->applySort($query_builder, $sort);
 
         return $query_builder;
     }
@@ -122,17 +162,15 @@ class OrganizationRepository extends AbstractRepository
      * Поиск всех организаций с указанной рубрикой (по идентификатору рубрики)
      *
      * @param Rubric|int $rubric
+     * @param bool $recursive
      * @return Organization[]
      */
-    public function findByRubric($rubric) {
-        $rubric_ids = array_keys($this->getEntityManager()->getRepository('AppBundle:Rubric')->findByIdRecursive($rubric));
-        if (!$rubric_ids) {
-            return [];
-        }
+    public function findByRubric($rubric, $recursive = false)
+    {
+        $rubric = ($rubric instanceof Rubric) ? $rubric->getId() : $rubric;
 
-        return $this->getResult($this->getQueryBuilder()
-            ->where('r.id IN (:rubric)')
-            ->setParameter('rubric', $rubric_ids)
+        return $this->getResult(
+            $this->applyFilterByRubric($this->getQueryBuilder(), $rubric, $recursive)
         );
     }
 
@@ -178,9 +216,8 @@ class OrganizationRepository extends AbstractRepository
     public function findByAddressPart($address)
     {
         $address = FilterTransformer::createFreeFilter($address);
-        return $this->getResult($this->getQueryBuilder()
-            ->where('LOWER(b.address) LIKE LOWER(:address)')
-            ->setParameter('address', $address)
+        return $this->getResult(
+            $this->applyFilterByAddress($this->getQueryBuilder(), $address)
         );
     }
 
@@ -194,11 +231,8 @@ class OrganizationRepository extends AbstractRepository
      */
     public function findByDistance($latitude, $longitude, $radius)
     {
-        return $this->getResult($this->getQueryBuilder()
-            ->where('GeoDistance(GeoPoint(b.longitude, b.latitude), GeoPoint(:longitude, :latitude)) < :radius')
-            ->setParameter('longitude', $longitude)
-            ->setParameter('latitude', $latitude)
-            ->setParameter('radius', $radius)
+        return $this->getResult(
+            $this->applyFilterByLocation($this->getQueryBuilder(), $latitude, $longitude, $radius)
         );
     }
 }

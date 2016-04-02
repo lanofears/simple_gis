@@ -19,7 +19,7 @@ class RubricControllerTest extends ApiControllerTest
         $client = static::createClient();
         $client-> request('GET', '/api/rubric/?name=Автомобили');
 
-        $this->assertJsonOk($client->getResponse(),
+        $this->assertJsonPagedOk($client->getResponse(),
             'Ответ на запрос /api/rubric/?name=xxx не является валидным ответом API');
 
         $data = json_decode($client->getResponse()->getContent(), true);

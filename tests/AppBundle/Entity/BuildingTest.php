@@ -5,8 +5,16 @@ namespace Tests\AppBundle\Entity;
 use AppBundle\Entity\Building;
 use Tests\AppBundle\Common\EntityTest;
 
+/**
+ * Тестирование работы со зданиями на уровне ORM
+ *
+ * @author Aleksey Skryazhevskiy
+ */
 class BuildingTest extends EntityTest
 {
+    /**
+     * Тестирование поиска по адресу
+     */
     public function testFindByAddress()
     {
         $address = 'Лесосечная, 7';
@@ -17,6 +25,9 @@ class BuildingTest extends EntityTest
         $this->assertCount(1, $buildings, 'Найдено более/менее одного здания адрес которого содержит "'.$address.'""');
     }
 
+    /**
+     * Тестирование поиска по месту нахождения
+     */
     public function testFindByRadius()
     {
         $radius = 100;

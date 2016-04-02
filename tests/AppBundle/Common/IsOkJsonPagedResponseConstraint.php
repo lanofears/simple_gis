@@ -2,15 +2,15 @@
 
 namespace Tests\AppBundle\Common;
 
-use \PHPUnit_Framework_Constraint;
+use PHPUnit_Framework_Constraint;
 use Symfony\Component\HttpFoundation\Response;
 
 /**
- * Проверка на соответствие корректному ответу на запрос к API
+ * Проверка на соответствие корректному ответу на запрос к API, содержащий постраничные данные
  *
  * @author Aleksey Skryzhavskiy
  */
-class IsOkJsonResponseConstraint extends PHPUnit_Framework_Constraint
+class IsOkJsonPagedResponseConstraint extends PHPUnit_Framework_Constraint
 {
     /**
      * @param Response $other
@@ -48,6 +48,10 @@ class IsOkJsonResponseConstraint extends PHPUnit_Framework_Constraint
             return false;
         }
 
+        if (!array_key_exists('total', $other) || ($other['total'] < 1)) {
+            return false;
+        }
+
         return true;
     }
 
@@ -56,6 +60,6 @@ class IsOkJsonResponseConstraint extends PHPUnit_Framework_Constraint
      */
     public function toString()
     {
-        return 'корректный ответ на запрос к API';
+        return 'корректный ответ на запрос к API, содержащий постраничные данные';
     }
 }

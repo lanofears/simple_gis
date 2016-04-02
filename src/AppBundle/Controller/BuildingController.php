@@ -36,6 +36,8 @@ class BuildingController extends ApiController
      *     filters={
      *          {"name"="address", "dataType"="string"},
      *          {"name"="location", "dataType"="float,float,int", "pattern"="latitude,longitude,radius"},
+     *          {"name"="page", "dataType"="int"},
+     *          {"name"="limit", "dataType"="int"},
      *          {"name"="callback", "dataType"="string"},
      *     },
      *     statusCodes={
@@ -56,9 +58,11 @@ class BuildingController extends ApiController
     public function listAction(Request $request)
     {
         $buildings = $this->building_repository
-            ->findByParams($this->filterParams($request, [
+            ->findByParamsPaged($this->filterParams($request, [
                 SearchFilters::Q_ADDRESS,
-                SearchFilters::Q_LOCATION
+                SearchFilters::Q_LOCATION,
+                SearchFilters::Q_LIMIT,
+                SearchFilters::Q_PAGE
             ]));
 
         return $this->returnResult('buildings', $buildings);

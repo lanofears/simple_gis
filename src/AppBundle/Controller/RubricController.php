@@ -39,6 +39,8 @@ class RubricController extends ApiController
      *     filters={
      *          {"name"="parent", "dataType"="int"},
      *          {"name"="name", "dataType"="string"},
+     *          {"name"="page", "dataType"="int"},
+     *          {"name"="limit", "dataType"="int"},
      *          {"name"="callback", "dataType"="string"},
      *     },
      *     statusCodes={
@@ -59,10 +61,12 @@ class RubricController extends ApiController
     public function listAction(Request $request)
     {
         $rubrics = $this->rubric_repository
-            ->findByParams($this->filterParams($request, [
+            ->findByParamsPaged($this->filterParams($request, [
                 SearchFilters::Q_NAME,
                 SearchFilters::Q_PARENT,
-                SearchFilters::Q_ORDER
+                SearchFilters::Q_ORDER,
+                SearchFilters::Q_LIMIT,
+                SearchFilters::Q_PAGE
             ]));
 
         return $this->returnResult('rubrics', $rubrics);

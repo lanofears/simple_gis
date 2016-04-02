@@ -23,7 +23,8 @@ use JMS\Serializer\Annotation\VirtualProperty;
  * @ExclusionPolicy("all")
  * @AccessorOrder("custom", custom = {"id", "parent_id", "name", "nestedChildren"})
  */
-class Rubric {
+class Rubric
+{
     /**
      * @var int
      *
@@ -74,7 +75,8 @@ class Rubric {
      * @SerializedName("children")
      * @Groups({"rubric_details"})
      */
-    public function nestedChildren(){
+    public function nestedChildren()
+    {
         $children = [];
         /** @var Rubric $child */
         foreach ($this->children as $child) {

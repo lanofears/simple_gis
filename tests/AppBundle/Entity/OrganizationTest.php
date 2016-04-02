@@ -4,9 +4,18 @@ namespace Tests\AppBundle\Entity;
 
 use Tests\AppBundle\Common\EntityTest;
 
+/**
+ * Тестирование работы с организациями на уровне ORM
+ *
+ * @author Aleksey Skryazhevskiy
+ */
 class OrganizationTest extends EntityTest
 {
-    public function testFindByRubricName() {
+    /**
+     * Тестирование поиска по наименованию рубрики
+     */
+    public function testFindByRubricName()
+    {
         $rubric = 'Полуфабрикаты оптом';
         $organizations = $this->em->getRepository('AppBundle:Organization')
             ->findByRubricName($rubric);
@@ -15,18 +24,26 @@ class OrganizationTest extends EntityTest
             'Найдено более/меньше 2-х организаций в рубрике "'.$rubric.'" (по наименованию)');
     }
 
-    public function testFindByRubricId() {
+    /**
+     * Тестирование поиска по идентификатору рубрики
+     */
+    public function testFindByRubricId()
+    {
         $rubric = $this->em->getRepository('AppBundle:Rubric')
             ->findOneBy([ 'name' => 'Автомобили' ]);
 
         $organizations = $this->em->getRepository('AppBundle:Organization')
-            ->findByRubric($rubric);
+            ->findByRubric($rubric, true);
 
         $this->assertCount(4, $organizations,
             'Найдено более/меньше 2-х организаций в рубрике "'.$rubric->getName().'" (по идентификатору)');
     }
 
-    public function testFindByAddressPart() {
+    /**
+     * Тестирование поиска по идентификатору рубрики
+     */
+    public function testFindByAddressPart()
+    {
         $address = 'Лесосечная, 7';
         $organizations = $this->em->getRepository('AppBundle:Organization')
             ->findByAddressPart($address);
@@ -35,7 +52,11 @@ class OrganizationTest extends EntityTest
             'Найдено более/меньше 3-х организаций в c адресом содержащим "'.$address.'"');
     }
 
-    public function testFindByBuildingId() {
+    /**
+     * Тестирование поиска по идентификатору здания
+     */
+    public function testFindByBuildingId()
+    {
         $building = $this->em->getRepository('AppBundle:Building')
             ->findOneBy([ 'address' => 'г. Новосибирск, ул. Лесосечная, д. 7' ]);
         $organizations = $this->em->getRepository('AppBundle:Organization')
@@ -45,7 +66,11 @@ class OrganizationTest extends EntityTest
             'Найдено более/меньше 3-х организаций по адресу "'.$building->getAddress().'"');
     }
 
-    public function testFindByDistance() {
+    /**
+     * Тестирование поиска по месту нахождения
+     */
+    public function testFindByDistance()
+    {
         $radius = 100;
         $latitude = 54.890313;
         $longitude = 83.089735;

@@ -25,6 +25,18 @@ class ApiControllerTest extends WebTestCase
     }
 
     /**
+     * Проверка на корректность успешно выполненного запроса к API, для метода с постраничной выдачей данных
+     *
+     * @param Response $response
+     * @param string $message
+     * @return mixed
+     */
+    protected function assertJsonPagedOk(Response $response, $message = '')
+    {
+        $this->assertThat($response, new IsOkJsonPagedResponseConstraint(), $message);
+    }
+
+    /**
      * Проверка объекта (в виде массива) на то, что он содержит минимально необходимые поля
      *
      * @param array $object

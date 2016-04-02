@@ -19,7 +19,7 @@ class BuildingControllerTest extends ApiControllerTest
         $client = static::createClient();
         $client-> request('GET', '/api/building/?address=лесосечная, 2');
 
-        $this->assertJsonOk($client->getResponse(),
+        $this->assertJsonPagedOk($client->getResponse(),
             'Ответ на запрос /api/building/?address=xxx не является валидным ответом API');
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertValidBuildings($data);
@@ -27,7 +27,7 @@ class BuildingControllerTest extends ApiControllerTest
         $client = static::createClient();
         $client-> request('GET', '/api/building/?location=54.890313,83.089735,100');
 
-        $this->assertJsonOk($client->getResponse(),
+        $this->assertJsonPagedOk($client->getResponse(),
             'Ответ на запрос /api/building/?location=xxx не является валидным ответом API');
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertValidBuildings($data);
@@ -70,6 +70,11 @@ class BuildingControllerTest extends ApiControllerTest
             'Ответ на запрос /api/building/0 не является корректной ошибкой API');
     }
 
+    /**
+     * Проверка данных объекта на корректность формата
+     *
+     * @param array $data
+     */
     private function assertValidBuildings($data)
     {
         $this->assertValidObject($data, 'buildings', ['id', 'address', 'latitude', 'longitude'],

@@ -10,6 +10,11 @@ use Symfony\Component\HttpKernel\Exception\MethodNotAllowedHttpException;
 use Symfony\Component\HttpKernel\Exception\NotFoundHttpException;
 use Symfony\Component\HttpKernel\Exception\UnsupportedMediaTypeHttpException;
 
+/**
+ * Сервис форматирования сообщения об ошибке API
+ *
+ * @author Aleksey Skryazhevskiy
+ */
 class ApiExceptionWrapperHandler implements ExceptionWrapperHandlerInterface
 {
     protected static $custom_messages = [

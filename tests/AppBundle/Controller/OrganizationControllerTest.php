@@ -19,7 +19,7 @@ class OrganizationControllerTest extends ApiControllerTest
         $client = static::createClient();
         $client-> request('GET', '/api/organization/?address=лесосечная, 2');
 
-        $this->assertJsonOk($client->getResponse(),
+        $this->assertJsonPagedOk($client->getResponse(),
             'Ответ на запрос /api/organization/?address=xxx не является валидным ответом API');
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertValidOrganization($data);
@@ -27,7 +27,7 @@ class OrganizationControllerTest extends ApiControllerTest
         $client = static::createClient();
         $client-> request('GET', '/api/organization/?location=54.890313,83.089735,100');
 
-        $this->assertJsonOk($client->getResponse(),
+        $this->assertJsonPagedOk($client->getResponse(),
             'Ответ на запрос /api/organization/?location=xxx не является валидным ответом API');
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertValidOrganization($data);
@@ -35,16 +35,16 @@ class OrganizationControllerTest extends ApiControllerTest
         $client = static::createClient();
         $client-> request('GET', '/api/organization/?location=54.890313,83.089735,100&order=name');
 
-        $this->assertJsonOk($client->getResponse(),
-            'Ответ на запрос /api/organization/?location=xxx не является валидным ответом API');
+        $this->assertJsonPagedOk($client->getResponse(),
+            'Ответ на запрос /api/organization/?location=xxx&order=name не является валидным ответом API');
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertValidOrganization($data);
 
         $client = static::createClient();
         $client-> request('GET', '/api/organization/?location=54.890313,83.089735,100&order=address');
 
-        $this->assertJsonOk($client->getResponse(),
-            'Ответ на запрос /api/organization/?location=xxx не является валидным ответом API');
+        $this->assertJsonPagedOk($client->getResponse(),
+            'Ответ на запрос /api/organization/?location=xxx&order=address не является валидным ответом API');
         $data = json_decode($client->getResponse()->getContent(), true);
         $this->assertValidOrganization($data);
 
@@ -89,6 +89,11 @@ class OrganizationControllerTest extends ApiControllerTest
             'Ответ на запрос /api/organization/0 не является корректной ошибкой API');
     }
 
+    /**
+     * Проверка данных объекта на корректность формата
+     *
+     * @param array $data
+     */
     private function assertValidOrganization($data)
     {
         $this->assertValidObject($data, 'organizations', ['id', 'name', 'building', 'phones', 'rubrics'],

@@ -18,7 +18,8 @@ use JMS\Serializer\Annotation\Groups;
  * @ORM\Entity(repositoryClass="AppBundle\Repository\BuildingRepository")
  * @ExclusionPolicy("all")
  */
-class Building {
+class Building
+{
     /**
      * @var int
      *
@@ -159,7 +160,8 @@ class Building {
      * @param $longitude
      * @return Building
      */
-    public function setCoordinates($latitude, $longitude) {
+    public function setCoordinates($latitude, $longitude)
+    {
         $this->latitude = $latitude;
         $this->longitude = $longitude;
 

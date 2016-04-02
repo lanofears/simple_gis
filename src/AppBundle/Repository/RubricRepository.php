@@ -6,8 +6,10 @@ use AppBundle\Entity\RecursiveRubricIterator;
 use AppBundle\Entity\Rubric;
 use AppBundle\Exception\WrongParametersException;
 use AppBundle\Extensions\References\SearchFilters;
+use AppBundle\Extensions\Utils\ArrayValidator;
 use AppBundle\Extensions\Utils\FilterTransformer;
 use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\ORM\QueryBuilder;
 use RecursiveIteratorIterator;
 
 /**
@@ -17,6 +19,14 @@ use RecursiveIteratorIterator;
  */
 class RubricRepository extends AbstractRepository
 {
+    const ORDER_BY_NAME = 'name';
+    const ORDER_BY_PARENT = 'parent';
+
+    protected static $order_mapping = [
+        self::ORDER_BY_NAME     => 'r.name',
+        self::ORDER_BY_PARENT   => 'parent_order'
+    ];
+
     /**
      * {@inheritDoc}
      */
@@ -29,44 +39,62 @@ class RubricRepository extends AbstractRepository
     }
 
     /**
+     * Добавление в запрос фильтра по наименованию рубрики
+     *
+     * @param QueryBuilder $query_builder
+     * @param string $name
+     * @return QueryBuilder
+     */
+    private function applyFilterByName($query_builder, $name)
+    {
+        $name = FilterTransformer::createSubStringFilter($name);
+
+        return $query_builder
+            ->andWhere('LOWER(r.name) LIKE LOWER(:name)')
+            ->setParameter('name', $name);
+    }
+
+    /**
+     * @param QueryBuilder $query_builder
+     * @param int $parent
+     * @return QueryBuilder
+     */
+    private function applyFilterByParent($query_builder, $parent)
+    {
+        return $query_builder
+            ->andWhere('r.parent = :parent')
+            ->setParameter('parent', $parent);
+    }
+
+    /**
      * {@inheritDoc}
      */
     protected function applyParameters($query_builder, $params)
     {
         if (array_key_exists(SearchFilters::Q_NAME, $params)) {
-            $address = FilterTransformer::createSubStringFilter($params[SearchFilters::Q_NAME]);
-            $query_builder
-                ->andWhere('LOWER(r.name) LIKE LOWER(:name)')
-                ->setParameter('name', $address);
+            $query_builder = $this->applyFilterByName($query_builder, $params[SearchFilters::Q_NAME]);
         }
 
         if (array_key_exists(SearchFilters::Q_PARENT, $params)) {
-            $query_builder
-                ->andWhere('r.parent = :parent')
-                ->setParameter('parent', $params[SearchFilters::Q_PARENT]);
+            $query_builder = $this->applyFilterByParent($query_builder, (int)$params[SearchFilters::Q_PARENT]);
         }
 
+        $sort = [ self::ORDER_BY_PARENT, self::ORDER_BY_NAME ];
         if (array_key_exists(SearchFilters::Q_ORDER, $params)) {
-            $order_values = ['name' => 'r.name', 'parent' => 'parent_order'];
-            foreach (explode(',', $params[SearchFilters::Q_ORDER]) as $order) {
-                if (!array_key_exists($order, $order_values)) {
-                    throw new WrongParametersException(
-                        'Неверное значение поля для портировки, доллжно быть "name", или "parent", получено "'.$order.'"');
-                }
-
-                $query_builder->addOrderBy($order_values[$order]);
+            $sort = explode(',', $params[SearchFilters::Q_ORDER]);
+            if (!ArrayValidator::isSubsetOf($sort, self::$order_mapping)) {
+                throw new WrongParametersException(
+                    'Неверное значение поля для портировки, может принимать значения "'.implode(self::$order_mapping).'", '.
+                    'получено "'.$params[SearchFilters::Q_ORDER].'"');
             }
         }
-        else {
-            $query_builder
-                ->addOrderBy('parent_order')
-                ->addOrderBy('r.name');
-        }
+        $query_builder = $this->applySort($query_builder, $sort);
 
         return $query_builder;
     }
 
-    public function findById($id) {
+    public function findById($id)
+    {
         return $this->getResult($this->getQueryBuilder()
             ->where('r.id = :id')
             ->setParameter('id', $id)
@@ -107,10 +135,8 @@ class RubricRepository extends AbstractRepository
      */
     public function findByNamePart($name)
     {
-        $name = FilterTransformer::createSubStringFilter($name);
-        return $this->getResult($this->getQueryBuilder()
-            ->where('r.name LIKE :name')
-            ->setParameter('name', $name)
+        return $this->getResult(
+            $this->applyFilterByName($this->getQueryBuilder(), $name)
         );
     }
 }

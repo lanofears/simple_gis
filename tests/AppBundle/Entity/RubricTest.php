@@ -5,8 +5,16 @@ namespace Tests\AppBundle\Entity;
 use AppBundle\Entity\Rubric;
 use Tests\AppBundle\Common\EntityTest;
 
+/**
+ * Тестирование работы с рубриками на уровне ORM
+ *
+ * @author Aleksey Skryazhevskiy
+ */
 class RubricTest extends EntityTest
 {
+    /**
+     * Тестирование поиска по наименованию рубрики
+     */
     public function testFindByNamePart()
     {
         $rubric_name = 'Легковые';
