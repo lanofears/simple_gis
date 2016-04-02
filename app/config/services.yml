@@ -4,12 +4,6 @@ parameters:
 #    parameter_name: value
 
 services:
-    app.exception_listener:
-        class: AppBundle\Exception\ApiExceptionListener
-        arguments: ["@logger"]
-        tags:
-            - { name: kernel.event_listener, event: kernel.exception, method: onKernelException }
-
     repository.building:
         class: AppBundle\Repository\BuildingRepository
         factory: ['@doctrine.orm.entity_manager', getRepository]

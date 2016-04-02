@@ -42,6 +42,7 @@ class OrganizationController extends ApiController
      *          {"name"="location", "dataType"="float,float,int", "pattern"="latitude,longitude,radius"},
      *          {"name"="rubric", "dataType"="int"},
      *          {"name"="order", "dataType"="string", "pattern"="name|address"},
+     *          {"name"="callback", "dataType"="string"},
      *     },
      *     statusCodes={
      *          200="Успешное выполнение запроса",
@@ -75,6 +76,9 @@ class OrganizationController extends ApiController
      * @ApiDoc(
      *     resource="/api/organization",
      *     description="Вывод информации об организации по заданному идентификатору.",
+     *     filters={
+     *          {"name"="callback", "dataType"="string"},
+     *     },
      *     statusCodes={
      *          200="Успешное выполнение запроса",
      *          404="Данные не найдены, организации с указанным идентификатором не существует",
@@ -82,6 +86,7 @@ class OrganizationController extends ApiController
      *     }
      * )
      *
+     * @param Request $request
      * @param int $id
      * @return array
      *
@@ -89,8 +94,10 @@ class OrganizationController extends ApiController
      * @Route("/{id}", requirements={"id": "\d+"}, name="api_organization_item")
      * @Method({"GET"})
      */
-    public function itemAction($id)
+    public function itemAction(Request $request,$id)
     {
+        $this->filterParams($request, []);
+
         return $this->returnResult('organizations', $this->organization_repository->findById($id));
     }
 }

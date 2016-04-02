@@ -4,6 +4,7 @@ namespace AppBundle\Controller;
 
 use AppBundle\Exception\EmptyResultException;
 use AppBundle\Exception\WrongParametersException;
+use AppBundle\Extensions\References\SearchFilters;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -24,6 +25,8 @@ class ApiController
     protected function filterParams($request, $param_names) {
         $params = [];
         $wrong_params = [];
+        $param_names[] = SearchFilters::Q_CALLBACK;
+
         foreach ($request->query->all() as $param_name => $param) {
             if (in_array($param_name, $param_names)) {
                 $params[$param_name] = $param;

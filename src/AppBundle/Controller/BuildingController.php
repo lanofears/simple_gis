@@ -36,6 +36,7 @@ class BuildingController extends ApiController
      *     filters={
      *          {"name"="address", "dataType"="string"},
      *          {"name"="location", "dataType"="float,float,int", "pattern"="latitude,longitude,radius"},
+     *          {"name"="callback", "dataType"="string"},
      *     },
      *     statusCodes={
      *          200="Успешное выполнение запроса",
@@ -67,6 +68,9 @@ class BuildingController extends ApiController
      * @ApiDoc(
      *     resource="/api/building",
      *     description="Вывод информации о здании по заданному идентификатору.",
+     *     filters={
+     *          {"name"="callback", "dataType"="string"},
+     *     },
      *     statusCodes={
      *          200="Успешное выполнение запроса",
      *          404="Данные не найдены, здания с указанным идентификатором не существует",
@@ -74,6 +78,7 @@ class BuildingController extends ApiController
      *     }
      * )
      *
+     * @param Request $request
      * @param int $id
      * @return array
      *
@@ -81,8 +86,10 @@ class BuildingController extends ApiController
      * @Route("/{id}", requirements={"id": "\d+"}, name="api_building_item")
      * @Method({"GET"})
      */
-    public function itemAction($id)
+    public function itemAction(Request $request,$id)
     {
+        $this->filterParams($request, []);
+
         return $this->returnResult('buildings', $this->building_repository->findById($id) );
     }
 }

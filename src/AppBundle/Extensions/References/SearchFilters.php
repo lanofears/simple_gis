@@ -10,4 +10,5 @@ interface SearchFilters
     const Q_ORDER = 'order';
     const Q_NAME = 'name';
     const Q_PARENT = 'parent';
+    const Q_CALLBACK = 'callback';
 }

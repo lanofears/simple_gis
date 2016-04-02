@@ -39,6 +39,7 @@ class RubricController extends ApiController
      *     filters={
      *          {"name"="parent", "dataType"="int"},
      *          {"name"="name", "dataType"="string"},
+     *          {"name"="callback", "dataType"="string"},
      *     },
      *     statusCodes={
      *          200="Успешное выполнение запроса",
@@ -71,6 +72,9 @@ class RubricController extends ApiController
      * @ApiDoc(
      *     resource="/api/rubric",
      *     description="Вывод информации о рубрике по заданному идентификатору.",
+     *     filters={
+     *          {"name"="callback", "dataType"="string"},
+     *     },
      *     statusCodes={
      *          200="Успешное выполнение запроса",
      *          404="Данные не найдены, организации с указанным идентификатором не существует",
@@ -78,6 +82,7 @@ class RubricController extends ApiController
      *     }
      * )
      *
+     * @param Request $request
      * @param int $id
      * @return array
      *
@@ -85,8 +90,10 @@ class RubricController extends ApiController
      * @Route("/{id}", requirements={"id": "\d+"}, name="api_rubric_item")
      * @Method({"GET"})
      */
-    public function itemAction($id)
+    public function itemAction(Request $request,$id)
     {
+        $this->filterParams($request, []);
+
         return $this->returnResult('rubrics', $this->rubric_repository->findById($id));
     }
 }
