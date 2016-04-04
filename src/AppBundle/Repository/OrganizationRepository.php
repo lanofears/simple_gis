@@ -38,6 +38,22 @@ class OrganizationRepository extends AbstractRepository
     }
 
     /**
+     * Добавление в запрос фильтра по наименованию организации
+     *
+     * @param QueryBuilder $query_builder
+     * @param $name
+     * @return mixed
+     */
+    private function applyFilterByName($query_builder, $name)
+    {
+        $name = FilterTransformer::createSubStringFilter($name);
+
+        return $query_builder
+            ->andWhere('LOWER(o.name) LIKE LOWER(:name)')
+            ->setParameter('name', $name);
+    }
+
+    /**
      * Добавление в запрос фильтра по адресу
      *
      * @param QueryBuilder $query_builder
@@ -100,6 +116,10 @@ class OrganizationRepository extends AbstractRepository
      */
     protected function applyParameters($query_builder, $params)
     {
+        if (array_key_exists(SearchFilters::Q_NAME, $params)) {
+            $query_builder = $this->applyFilterByName($query_builder, $params[SearchFilters::Q_NAME]);
+        }
+
         if (array_key_exists(SearchFilters::Q_ADDRESS, $params)) {
             $query_builder = $this->applyFilterByAddress($query_builder, $params[SearchFilters::Q_ADDRESS]);
         }
@@ -205,6 +225,19 @@ class OrganizationRepository extends AbstractRepository
     }
 
     /**
+     * Поиск всех организаций с наименованием удовлетворяющим заданному фильтру.
+    *
+     * @param string $name
+     * @return Organization[]
+     */
+    public function findByName($name)
+    {
+        return $this->getResult(
+            $this->applyFilterByName($this->getQueryBuilder(), $name)
+        );
+    }
+
+    /**
      * Поиск всех организаций с адресом удовлетворяющим заданному фильтру.
      * Фильтр строится из указанной строки $address удалением всех спецсимволов и заменой пробелов на
      * вхождение либого кол-ва любых символов.
@@ -215,7 +248,6 @@ class OrganizationRepository extends AbstractRepository
      */
     public function findByAddressPart($address)
     {
-        $address = FilterTransformer::createFreeFilter($address);
         return $this->getResult(
             $this->applyFilterByAddress($this->getQueryBuilder(), $address)
         );

@@ -40,6 +40,19 @@ class OrganizationTest extends EntityTest
     }
 
     /**
+     * Тестирование поиска по наименованию орпанизации
+     */
+    public function testFindByName()
+    {
+        $name = 'тренажорка';
+        $organizations = $this->em->getRepository('AppBundle:Organization')
+            ->findByName($name);
+
+        $this->assertCount(1, $organizations,
+            'Найдено более/меньше 1-ой организации с наименованием содержащим "'.$name.'"');
+    }
+
+    /**
      * Тестирование поиска по идентификатору рубрики
      */
     public function testFindByAddressPart()

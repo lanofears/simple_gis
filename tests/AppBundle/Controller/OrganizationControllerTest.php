@@ -17,6 +17,14 @@ class OrganizationControllerTest extends ApiControllerTest
     public function testSuccess()
     {
         $client = static::createClient();
+        $client-> request('GET', '/api/organization/?name=тренажорка');
+
+        $this->assertJsonPagedOk($client->getResponse(),
+            'Ответ на запрос /api/organization/?name=xxx не является валидным ответом API');
+        $data = json_decode($client->getResponse()->getContent(), true);
+        $this->assertValidOrganization($data);
+
+        $client = static::createClient();
         $client-> request('GET', '/api/organization/?address=лесосечная, 2');
 
         $this->assertJsonPagedOk($client->getResponse(),

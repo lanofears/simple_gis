@@ -38,6 +38,7 @@ class OrganizationController extends ApiController
      *     resource="/api/organization",
      *     description="Вывод списка организаций удовлетворяющих заданным критериям: address - поиск по адресу содержащему указанную подстроку, location - поиск организаций находящихся на заданном удалении от указанной точки, rubric - поиск по рубрике, order - сортировка: address, name (по умолчанию)",
      *     filters={
+     *          {"name"="name", "dataType"="string"},
      *          {"name"="address", "dataType"="string"},
      *          {"name"="location", "dataType"="float,float,int", "pattern"="latitude,longitude,radius"},
      *          {"name"="rubric", "dataType"="int"},
@@ -65,6 +66,7 @@ class OrganizationController extends ApiController
     {
         $organizations = $this->organization_repository
             ->findByParamsPaged($this->filterParams($request, [
+                SearchFilters::Q_NAME,
                 SearchFilters::Q_ADDRESS,
                 SearchFilters::Q_LOCATION,
                 SearchFilters::Q_RUBRIC,
